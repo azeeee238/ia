@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léa - Conjugaison Ultime</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 420px;
+            height: 620px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .chat-header {
+            background: #8b5cf6;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .message.bot { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: #8b5cf6; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .chat-input-area button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            margin-left: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>📚 Léa - Conjugaison Pro</span>
+            <a href="index.html" class="back-btn">Menu 🏠</a>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Coucou ! C'est Léa version Conjugaison Totale. 
+Demande-moi un verbe et un temps (ex: "conjuguer chanter au futur simple" ou "finir au passé composé"). 
+Je gère l'indicatif, l'impératif, les temps simples et composés !</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Ex: conjuguer aller au futur..." autofocus>
+            <button onclick="envoyerMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("userInput");
+        const messagesContainer = document.getElementById("chatMessages");
+        inputField.addEventListener("keypress", (e) => { if (e.key === "Enter") envoyerMessage(); });
+
+        function ajouterMessage(texte, expediteur) {
+            const div = document.createElement("div");
+            div.classList.add("message", expediteur);
+            div.textContent = texte;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // --- CERVEAU DE CONJUGAISON ---
+        function conjuguerVerbe(texte) {
+            const t = texte.toLowerCase();
+
+            // Détection du verbe
+            let verbe = "chanter";
+            if (t.includes("finir")) verbe = "finir";
+            else if (t.includes("etre") || t.includes("être")) verbe = "être";
+            else if (t.includes("avoir")) verbe = "avoir";
+            else if (t.includes("aller")) verbe = "aller";
+            else if (t.includes("venir")) verbe = "venir";
+            else if (t.includes("faire")) verbe = "faire";
+            else if (t.includes("prendre")) verbe = "prendre";
+
+            // Détection du temps
+            // Futur simple
+            if (t.includes("futur")) {
+                if (verbe === "chanter") return "Futur simple (chanter) :\n• Je chanterai\n• Tu chanteras\n• Il/Elle chantera\n• Nous chanterons\n• Vous chanterez\n• Ils/Elles chanteront";
+                if (verbe === "finir") return "Futur simple (finir) :\n• Je finirai\n• Tu finiras\n• Il/Elle finira\n• Nous finirons\n• Vous finirez\n• Ils/Elles finiront";
+                if (verbe === "être") return "Futur simple (être) :\n• Je serai\n• Tu seras\n• Il/Elle sera\n• Nous serons\n• Vous serez\n• Ils/Elles seront";
+                if (verbe === "avoir") return "Futur simple (avoir) :\n• J'aurai\n• Tu auras\n• Il/Elle aura\n• Nous aurons\n• Vous aurez\n• Ils/Elles auront";
+                if (verbe === "aller") return "Futur simple (aller) :\n• J'irai\n• Tu iras\n• Il/Elle ira\n• Nous irons\n• Vous irez\n• Ils/Elles iront";
+            }
+
+            // Passé composé (Temps composé)
+            if (t.includes("passe compose") || t.includes("passé composé") || t.includes("compose") || t.includes("composé")) {
+                if (verbe === "chanter") return "Passé composé (chanter) :\n• J'ai chanté\n• Tu as chanté\n• Il/Elle a chanté\n• Nous avons chanté\n• Vous avez chanté\n• Ils/Elles ont chanté";
+                if (verbe === "finir") return "Passé composé (finir) :\n• J'ai fini\n• Tu as fini\n• Il/Elle a fini\n• Nous avons fini\n• Vous avez fini\n• Ils/Elles ont fini";
+                if (verbe === "être") return "Passé composé (être) :\n• J'ai été\n• Tu as été\n• Il/Elle a été\n• Nous avons été\n• Vous avez été\n• Ils/Elles ont été";
+                if (verbe === "aller") return "Passé composé (aller - avec être) :\n• Je suis allé(e)\n• Tu es allé(e)\n• Il/Elle est allé(e)\n• Nous sommes allé(e)s\n• Vous êtes allé(e)s\n• Ils/Elles sont allé(e)s";
+            }
+
+            // Imparfait (Temps simple)
+            if (t.includes("imparfait")) {
+                if (verbe === "chanter") return "Imparfait (chanter) :\n• Je chantais\n• Tu chantais\n• Il/Elle chantait\n• Nous chantions\n• Vous chantiez\n• Ils/Elles chantaient";
+                if (verbe === "finir") return "Imparfait (finir) :\n• Je finissais\n• Tu finissais\n• Il/Elle finissait\n• Nous finissions\n• Vous finissiez\n• Ils/Elles finissaient";
+                if (verbe === "être") return "Imparfait (être) :\n• J'étais\n• Tu étais\n• Il/Elle était\n• Nous étions\n• Vous étiez\n• Ils/Elles étaient";
+                if (verbe === "avoir") return "Imparfait (avoir) :\n• J'avais\n• Tu avais\n• Il/Elle avait\n• Nous avions\n• Vous aviez\n• Ils/Elles avaient";
+            }
+
+            // Présent de l'indicatif
+            if (t.includes("present") || t.includes("présent")) {
+                if (verbe === "chanter") return "Présent (chanter) :\n• Je chante\n• Tu chantes\n• Il/Elle chante\n• Nous chantons\n• Vous chantez\n• Ils/Elles chantent";
+                if (verbe === "finir") return "Présent (finir) :\n• Je finis\n• Tu finis\n• Il/Elle finit\n• Nous finissons\n• Vous finissez\n• Ils/Elles finissent";
+                if (verbe === "être") return "Présent (être) :\n• Je suis\n• Tu es\n• Il/Elle est\n• Nous sommes\n• Vous êtes\n• Ils/Elles sont";
+                if (verbe === "avoir") return "Présent (avoir) :\n• J'ai\n• Tu as\n• Il/Elle a\n• Nous avons\n• Vous avez\n• Ils/Elles ont";
+            }
+
+            // Passé simple (Temps simple)
+            if (t.includes("passe simple") || t.includes("passé simple")) {
+                if (verbe === "chanter") return "Passé simple (chanter) :\n• Je chantai\n• Tu chantas\n• Il/Elle chanta\n• Nous chantâmes\n• Vous chantâtes\n• Ils/Elles chantèrent";
+                if (verbe === "finir") return "Passé simple (finir) :\n• Je finis\n• Tu finis\n• Il/Elle finit\n• Nous finîmes\n• Vous finîtes\n• Ils/Elles finirent";
+                if (verbe === "être") return "Passé simple (être) :\n• Je fus\n• Tu fus\n• Il/Elle fut\n• Nous fûmes\n• Vous fûtes\n• Ils/Elles furent";
+            }
+
+            // Impératif
+            if (t.includes("imperatif") || t.includes("impératif")) {
+                if (verbe === "chanter") return "Impératif présent (chanter) :\n• Chante !\n• Chantons !\n• Chantez !";
+                if (verbe === "finir") return "Impératif présent (finir) :\n• Finis !\n• Finissons !\n• Finissez !";
+                if (verbe === "être") return "Impératif présent (être) :\n• Sois !\n• Soyons !\n• Soyez !";
+            }
+
+            return `J'ai bien compris que tu voulais conjuguer "${verbe}", mais précise bien le temps (présent, imparfait, futur simple, passé composé, passé simple ou impératif) !`;
+        }
+
+        function envoyerMessage() {
+            const texte = inputField.value.trim();
+            if (!texte) return;
+            ajouterMessage(texte, "user");
+            inputField.value = "";
+            setTimeout(() => ajouterMessage(conjuguerVerbe(texte), "bot"), 400);
+        }
+    </script>
+</body>
+</html>
